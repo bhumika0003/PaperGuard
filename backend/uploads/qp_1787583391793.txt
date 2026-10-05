@@ -1,0 +1,19 @@
+SECURE EXAMINATION QUESTION PAPER
+=================================
+Subject: Information technology  (CS006)
+Exam: Spring 2026 End-Sem Examination
+Department: IT
+Date: 2026-09-10
+Semester: Semester VI
+
+Instructions:
+1. Answer all questions clearly.
+2. Total Time: 3 Hours. Max Marks: 100.
+
+Section A (20 Marks)
+Q1. Explain the fundamental principles of cryptographic hashing in preventing paper leaks.
+Q2. Differentiate between Role-Based Access Control and Attribute-Based Access Control.
+
+Section B (40 Marks)
+Q3. Design a secure document viewing pipeline that overlays dynamic watermarks.
+Q4. Describe how digital signatures ensure end-to-end question paper integrity.

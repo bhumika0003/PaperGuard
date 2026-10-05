@@ -1,0 +1,8 @@
+CONFIDENTIAL EXAMINATION QUESTION PAPER
+Subject: Advanced Cryptography & Network Security (CS604)
+Semester: VI | Max Marks: 100 | Time: 3 Hours
+Department: Computer Science
+
+Q1. Implement RSA Encryption algorithm given p=61 and q=53.
+Q2. Illustrate Diffie-Hellman Key Exchange protocol.
+Q3. Explain AES-256 cipher block chaining mode.

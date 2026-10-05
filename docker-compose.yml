@@ -1,0 +1,45 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    container_name: securestack-app
+    ports:
+      - "8000:3000"  # Frontend (host:container)
+      - "8001:7000"  # Backend (host:container)
+    depends_on:
+      - postgres
+    environment:
+      NODE_ENV: development
+      PORT: 7000
+      DB_DIALECT: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASS: bhumi0309
+      DB_NAME: securestack
+    networks:
+      - securestack-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    container_name: securestack-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: bhumi0309
+      POSTGRES_DB: securestack
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - securestack-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  securestack-network:
+    driver: bridge

@@ -1,0 +1,15 @@
+CONFIDENTIAL EXAMINATION QUESTION PAPER
+Subject: Distributed Systems & Cloud Security (CS601)
+Semester: VI | Max Marks: 100 | Time: 3 Hours
+Department: Computer Science
+
+SECTION A (Answer all questions - 20 Marks)
+1. Define Byzantine Fault Tolerance and explain its relevance in consensus protocols.
+2. Calculate the SHA-256 digital fingerprint hash for a 4KB block payload.
+
+SECTION B (Answer 4 out of 5 - 40 Marks)
+3. Explain the architecture of Role-Based Access Control (RBAC) in preventing internal unauthorized leaks.
+4. How does continuous document dynamic watermarking prevent physical screen photograph leakage?
+
+SECTION C (40 Marks)
+5. Design an end-to-end question paper distribution system featuring Principal approval workflows.

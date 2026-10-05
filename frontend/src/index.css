@@ -1,0 +1,585 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Default Dark/Night Mode Body & Theme Specification (Lighter Soft Shade) */
+html.dark body {
+  background-color: #182232;
+  color: #F8FAFC;
+}
+
+html.dark .bg-cyber-dark {
+  background-color: #182232 !important;
+  color: #F8FAFC !important;
+}
+
+html.dark .bg-cyber-card {
+  background-color: #222D42 !important;
+  border-color: #33435C !important;
+  color: #F8FAFC !important;
+}
+
+/* Light Mode Body */
+html.light body {
+  background: linear-gradient(135deg, #F2F5F9 0%, #E9EFF6 50%, #F4F7FB 100%);
+  color: #0F172A;
+}
+
+body {
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- LIGHT MODE COMPREHENSIVE CALM HIGH-CONTRAST THEME --- */
+
+/* Page Background */
+html.light body,
+html.light .bg-cyber-dark {
+  background: linear-gradient(135deg, #F1F5F9 0%, #E8EEF5 50%, #F3F7FB 100%) !important;
+  color: #0F172A !important;
+}
+
+/* Card Containers */
+html.light .bg-cyber-card {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), 0 4px 12px -2px rgba(15, 23, 42, 0.02) !important;
+}
+
+/* Typography Overrides */
+html.light .text-white {
+  color: #0F172A !important;
+}
+html.light .text-slate-100,
+html.light .text-slate-200 {
+  color: #1E293B !important;
+}
+html.light .text-slate-300 {
+  color: #334155 !important;
+}
+html.light .text-slate-400 {
+  color: #475569 !important;
+}
+html.light .text-slate-500 {
+  color: #64748B !important;
+}
+
+/* Form Inputs, Textareas, Selects */
+html.light input,
+html.light select,
+html.light textarea,
+html.light .bg-slate-900 {
+  background-color: #F8FAFC !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+html.light input:focus,
+html.light select:focus,
+html.light textarea:focus {
+  background-color: #FFFFFF !important;
+  border-color: #0284C7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+/* Header Banners - Catch All Opacities */
+html.light [class*="from-cyan-950"] {
+  background: linear-gradient(to right, #E0F2FE 0%, #F1F5F9 100%) !important;
+  border-color: #BAE6FD !important;
+}
+
+html.light [class*="from-amber-950"] {
+  background: linear-gradient(to right, #FEF3C7 0%, #FFFBEB 100%) !important;
+  border-color: #FDE68A !important;
+}
+
+html.light [class*="from-purple-950"] {
+  background: linear-gradient(to right, #F3E8FF 0%, #FAF5FF 100%) !important;
+  border-color: #E9D5FF !important;
+}
+
+html.light [class*="from-rose-950"] {
+  background: linear-gradient(to right, #FFE4E6 0%, #FFF1F2 100%) !important;
+  border-color: #FECDD3 !important;
+}
+
+html.light [class*="from-blue-950"] {
+  background: linear-gradient(to right, #DBEAFE 0%, #EFF6FF 100%) !important;
+  border-color: #BFDBFE !important;
+}
+
+html.light [class*="from-emerald-950"] {
+  background: linear-gradient(to right, #D1FAE5 0%, #ECFDF5 100%) !important;
+  border-color: #A7F3D0 !important;
+}
+
+html.light [class*="from-slate-900"] {
+  background: linear-gradient(to right, #E0F2FE 0%, #F1F5F9 100%) !important;
+  border-color: #BAE6FD !important;
+}
+
+/* Leadership & Quick Announcement Bar in Light Mode */
+html.light .border-amber-500\/30 {
+  background-color: #FEF3C7 !important;
+  border-color: #FDE68A !important;
+  color: #92400E !important;
+}
+html.light .border-amber-500\/30 .text-amber-400,
+html.light .border-amber-500\/30 span {
+  color: #B45309 !important;
+}
+
+html.light [class*="from-"] h1,
+html.light [class*="from-"] h2 {
+  color: #0F172A !important;
+}
+html.light [class*="from-"] p {
+  color: #334155 !important;
+}
+
+/* Required Security Warning Banners in Light Mode */
+html.light .bg-amber-950\/80,
+html.light .bg-amber-950\/60,
+html.light .bg-amber-950 {
+  background-color: #FEF3C7 !important;
+  border-color: #FDE68A !important;
+  color: #92400E !important;
+}
+html.light .bg-amber-950\/80 *,
+html.light .bg-amber-950\/60 *,
+html.light .bg-amber-950 * {
+  color: #92400E !important;
+}
+
+/* Success Alert Banners */
+html.light .bg-emerald-950\/70,
+html.light .bg-emerald-950\/80,
+html.light .bg-emerald-950\/90,
+html.light .bg-emerald-950 {
+  background-color: #ECFDF5 !important;
+  border-color: #6EE7B7 !important;
+  color: #065F46 !important;
+}
+html.light .bg-emerald-950\/70 *,
+html.light .bg-emerald-950\/80 *,
+html.light .bg-emerald-950\/90 * {
+  color: #065F46 !important;
+}
+html.light .border-emerald-900 {
+  border-color: #A7F3D0 !important;
+}
+
+/* Table Rows & Headers */
+html.light table th {
+  color: #475569 !important;
+  border-bottom-color: #E2E8F0 !important;
+}
+html.light table td {
+  border-bottom-color: #F1F5F9 !important;
+}
+html.light tr.hover\:bg-slate-900\/50:hover {
+  background-color: #F1F5F9 !important;
+}
+
+/* Action Buttons in Tables & Cards */
+html.light .bg-slate-800,
+html.light .bg-slate-800\/80,
+html.light .bg-slate-950 {
+  background-color: #F1F5F9 !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+}
+html.light .bg-slate-800:hover,
+html.light .bg-slate-700:hover {
+  background-color: #E2E8F0 !important;
+}
+
+html.light .bg-cyan-950,
+html.light .bg-cyan-950\/80 {
+  background-color: #E0F2FE !important;
+  border-color: #7DD3FC !important;
+  color: #0369A1 !important;
+}
+html.light .bg-cyan-950:hover {
+  background-color: #BAE6FD !important;
+}
+
+/* Ensure text inside white buttons stays white when using gradients */
+html.light button.bg-gradient-to-r *,
+html.light a.bg-gradient-to-r * {
+  color: #FFFFFF !important;
+}
+
+/* Badges & Pills */
+html.light .bg-cyan-950\/60,
+html.light .bg-cyan-950\/80,
+html.light .bg-cyan-900\/80 {
+  background-color: #E0F2FE !important;
+  border-color: #7DD3FC !important;
+  color: #0284C7 !important;
+}
+
+html.light .bg-amber-950\/60 {
+  background-color: #FEF3C7 !important;
+  border-color: #FDE68A !important;
+  color: #D97706 !important;
+}
+
+html.light .bg-emerald-950\/60,
+html.light .bg-emerald-900\/80 {
+  background-color: #D1FAE5 !important;
+  border-color: #6EE7B7 !important;
+  color: #059669 !important;
+}
+
+html.light .bg-purple-950\/60 {
+  background-color: #F3E8FF !important;
+  border-color: #D8B4FE !important;
+  color: #9333EA !important;
+}
+
+html.light .bg-blue-950\/60 {
+  background-color: #DBEAFE !important;
+  border-color: #93C5FD !important;
+  color: #2563EB !important;
+}
+
+html.light .bg-rose-950\/60 {
+  background-color: #FFE4E6 !important;
+  border-color: #FECDD3 !important;
+  color: #E11D48 !important;
+}
+
+html.light header {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-bottom-color: #E2E8F0 !important;
+  box-shadow: 0 4px 20px -4px rgba(15, 23, 42, 0.05) !important;
+}
+
+html.light aside {
+  background-color: #FFFFFF !important;
+  border-right-color: #E2E8F0 !important;
+}
+
+html.light aside .bg-slate-900\/80,
+html.light aside .bg-slate-900,
+html.light aside .bg-slate-950 {
+  background-color: #F8FAFC !important;
+  border-color: #E2E8F0 !important;
+}
+
+html.light aside .bg-cyan-500\/10 {
+  background-color: #E0F2FE !important;
+  border-color: #BAE6FD !important;
+}
+
+html.light aside .text-cyan-500,
+html.light aside .text-cyan-400 {
+  color: #0284C7 !important;
+}
+
+html.light aside .text-slate-400 {
+  color: #64748B !important;
+}
+
+/* Active NavLink on Light Blue Pill (Text & Icon: Deep Dark Cyan/Black #0369A1) */
+html.light aside a.active-nav-link,
+html.light aside a.active-nav-link *,
+html.light aside a.active,
+html.light aside a.active * {
+  background-color: #E0F2FE !important;
+  border-color: #7DD3FC !important;
+  color: #0369A1 !important;
+  font-weight: 700 !important;
+}
+
+/* Hovered NavLink on Slate Gray Pill (Text & Icon: Pure White #FFFFFF) */
+html.light aside a.hover-nav-link:hover,
+html.light aside a.hover-nav-link:hover *,
+html.light aside a:hover,
+html.light aside a:hover * {
+  background-color: #475569 !important;
+  color: #FFFFFF !important;
+}
+
+/* Inactive Sidebar Nav Links */
+html.light aside a:not(.active-nav-link):not(:hover) {
+  color: #334155 !important;
+}
+html.light aside a:not(.active-nav-link):not(:hover) * {
+  color: #334155 !important;
+}
+
+/* --- LIGHT MODE MODALS --- */
+html.light .bg-cyber-card {
+  background-color: #FFFFFF !important;
+  border-color: #CBD5E1 !important;
+  color: #0F172A !important;
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.15) !important;
+}
+
+/* Modal Inner Container Boxes in Light Mode */
+html.light .bg-cyber-card .bg-slate-100,
+html.light .bg-cyber-card .bg-slate-900,
+html.light .bg-cyber-card [class*="bg-slate-900"],
+html.light .bg-cyber-card [class*="bg-slate-950"],
+html.light [class*="bg-slate-900\/"],
+html.light [class*="bg-slate-950\/"] {
+  background-color: #F1F5F9 !important;
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+
+html.light [class*="bg-slate-900"] .text-slate-400,
+html.light [class*="bg-slate-950"] .text-slate-400,
+html.light [class*="bg-slate-900"] label,
+html.light [class*="bg-slate-900"] span {
+  color: #475569 !important;
+}
+
+html.light [class*="bg-slate-900"] .text-white,
+html.light [class*="bg-slate-950"] .text-white,
+html.light [class*="bg-slate-900"] h3 {
+  color: #0F172A !important;
+}
+
+/* Glassmorphism Effect */
+.glass-panel {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+html.light .glass-panel {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
+}
+
+.glass-panel-cyan {
+  background: rgba(6, 182, 212, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+/* --- LIGHT MODE SECTION & TEXT VISIBILITY OVERRIDES --- */
+html.light .bg-cyber-dark\/95,
+html.light .bg-cyber-dark\/80,
+html.light section.bg-cyber-dark\/95 {
+  background-color: transparent !important;
+  background: linear-gradient(135deg, #F1F5F9 0%, #E8EEF5 50%, #F3F7FB 100%) !important;
+}
+
+/* Security Info Disclaimer Banner (Light Mode) */
+html.light .bg-rose-950\/40 {
+  background-color: #FFF1F2 !important;
+  border-color: #FECDD3 !important;
+}
+html.light .bg-rose-950\/40 .text-rose-400 {
+  color: #E11D48 !important;
+}
+html.light blockquote.bg-slate-950\/80 {
+  background-color: #FFFFFF !important;
+  border-color: #FDA4AF !important;
+  color: #9F1239 !important;
+  font-weight: 600 !important;
+}
+
+/* Security Info Workflow Cards (Light Mode) */
+html.light .grid .bg-slate-900\/90 {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05) !important;
+}
+html.light .grid .bg-slate-900\/90 p {
+  color: #334155 !important;
+  font-weight: 500 !important;
+}
+
+/* Print Security Restrictions */
+@media print {
+  body {
+    display: none !important;
+  }
+  html::after {
+    content: "SECURITY ALERT: PRINTING RESTRICTED. Question papers cannot be printed by security policy.";
+    display: block;
+    font-size: 24px;
+    color: red;
+    text-align: center;
+    padding: 100px 20px;
+  }
+}
+
+/* Disable user copy selection inside secure viewer container */
+.secure-viewer-no-select {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #182232;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #33435C;
+  border-radius: 4px;
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 12s linear infinite;
+}
+
+/* Cloud drift animation right to left */
+@keyframes cloudPassRightToLeft {
+  0% {
+    transform: translateX(12px);
+    opacity: 0.2;
+  }
+  25% {
+    opacity: 0.9;
+  }
+  75% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateX(-12px);
+    opacity: 0.2;
+  }
+}
+
+.animate-cloud-pass {
+  animation: cloudPassRightToLeft 4s linear infinite;
+}
+
+@keyframes cloudDriftRightToLeft {
+  0%, 100% {
+    transform: translateX(6px);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateX(-6px);
+    opacity: 0.95;
+  }
+}
+
+.animate-cloud-drift {
+  animation: cloudDriftRightToLeft 3.5s ease-in-out infinite;
+}
+
+/* Subtle pulse & float for sun and moon */
+@keyframes celestialFloat {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-1.5px) scale(1.04);
+  }
+}
+
+.animate-celestial-float {
+  animation: celestialFloat 3s ease-in-out infinite;
+}
+
+/* Rainbow Gradient Glowing Border Effect (Matching image 4) */
+@keyframes rainbowShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.rainbow-glow-border {
+  position: relative;
+  border-radius: 1.125rem;
+  padding: 2px;
+  background: linear-gradient(90deg, #06b6d4, #3b82f6, #8b5cf6, #ec4899, #f59e0b, #10b981, #06b6d4);
+  background-size: 300% 300%;
+  animation: rainbowShift 5s ease infinite;
+  transition: all 0.3s ease;
+}
+
+.rainbow-glow-border:hover {
+  animation-duration: 2.5s;
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4), 0 0 35px rgba(236, 72, 153, 0.3);
+}
+
+html.light .rainbow-glow-border {
+  box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2);
+}
+
+/* Brand Logo Typography Rules - High Specificity Color Guarantees Across All Cards & Containers */
+span.brand-secure,
+html.light span.brand-secure,
+html.light [class*="from-"] h1 span.brand-secure,
+html.light [class*="from-"] h2 span.brand-secure,
+html.light [class*="from-"] h3 span.brand-secure,
+html.light [class*="from-"] span.brand-secure,
+h1 span.brand-secure,
+h2 span.brand-secure,
+h3 span.brand-secure {
+  color: #0F172A !important;
+}
+
+html.dark span.brand-secure,
+html.dark [class*="from-"] h1 span.brand-secure,
+html.dark [class*="from-"] h2 span.brand-secure,
+html.dark [class*="from-"] h3 span.brand-secure,
+html.dark [class*="from-"] span.brand-secure {
+  color: #FFFFFF !important;
+}
+
+span.brand-stack,
+html.light span.brand-stack,
+html.light [class*="from-"] h1 span.brand-stack,
+html.light [class*="from-"] h2 span.brand-stack,
+html.light [class*="from-"] h3 span.brand-stack,
+html.light [class*="from-"] span.brand-stack,
+html.dark span.brand-stack,
+html.dark [class*="from-"] h1 span.brand-stack,
+html.dark [class*="from-"] h2 span.brand-stack,
+html.dark [class*="from-"] h3 span.brand-stack,
+html.dark [class*="from-"] span.brand-stack,
+h1 span.brand-stack,
+h2 span.brand-stack,
+h3 span.brand-stack {
+  color: #00A8CC !important;
+}
+
+span.brand-dot,
+html.light span.brand-dot,
+html.dark span.brand-dot {
+  background-color: #2DD4BF !important;
+}
+
+span.brand-tagline,
+html.light span.brand-tagline,
+html.dark span.brand-tagline,
+html.light [class*="from-"] span.brand-tagline {
+  color: #64748B !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+}
+
+
