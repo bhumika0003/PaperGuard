@@ -181,7 +181,7 @@ CHECK 6: Database has data
    Should show: 2 users (Admin + Test User)
 
 ================================================================================
-PART 7: TEST USER ACCOUNTS6
+PART 7: TEST USER ACCOUNTS
 ================================================================================
 
 We created a test user through the API:

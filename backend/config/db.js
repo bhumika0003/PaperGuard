@@ -1,76 +1,52 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import pg from 'pg';
 
-dotenv.config();
+dotenv.config({ override: false });
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const postgresDb = process.env.DB_NAME || 'secure_paper_db';
+const postgresDb = process.env.DB_NAME || 'postgres';
 const postgresUser = process.env.DB_USER || 'postgres';
 const postgresPass = process.env.DB_PASS || 'postgres';
 const postgresHost = process.env.DB_HOST || 'localhost';
-const postgresPort = process.env.DB_PORT || 5432;
+const postgresPort = Number(process.env.DB_PORT || 5432);
 
-const dbDialect = process.env.DB_DIALECT || 'sqlite';
+console.log('🔧 Database configuration:');
+console.log('   Host:', postgresHost);
+console.log('   User:', postgresUser);
+console.log('   Database:', postgresDb);
+console.log('   Port:', postgresPort);
+console.log('   Dialect:', process.env.DB_DIALECT);
 
-let sequelize;
-
-if (dbDialect === 'postgres') {
-  sequelize = new Sequelize(postgresDb, postgresUser, postgresPass, {
+export const sequelize = new Sequelize(
+  postgresDb,
+  postgresUser,
+  postgresPass,
+  {
     host: postgresHost,
     port: postgresPort,
     dialect: 'postgres',
-    logging: false
-  });
-} else {
-  sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: path.join(__dirname, '../data/secure_paper.sqlite'),
-    logging: false
-  });
-}
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    }
+  }
+);
 
 export const connectDB = async () => {
-  if (dbDialect === 'postgres') {
-    try {
-      // Auto-create database 'secure_paper_db' if it doesn't exist
-      const client = new pg.Client({
-        host: postgresHost,
-        port: postgresPort,
-        user: postgresUser,
-        password: postgresPass,
-        database: 'postgres'
-      });
-      await client.connect();
-      const res = await client.query(`SELECT 1 FROM pg_database WHERE datname = '${postgresDb}'`);
-      if (res.rowCount === 0) {
-        await client.query(`CREATE DATABASE "${postgresDb}"`);
-        console.log(`✅ Created PostgreSQL database '${postgresDb}' successfully.`);
-      }
-      await client.end();
-
-      await sequelize.authenticate();
-      console.log(`✅ Connected successfully to POSTGRESQL database.`);
-    } catch (error) {
-      console.warn('⚠️ Could not connect to PostgreSQL:', error.message);
-      console.warn('⚠️ Falling back to SQLite database storage...');
-      sequelize = new Sequelize({
-        dialect: 'sqlite',
-        storage: path.join(__dirname, '../data/secure_paper.sqlite'),
-        logging: false
-      });
-      await sequelize.authenticate();
-      console.log('✅ Connected successfully to SQLITE database.');
-    }
-  } else {
+  try {
     await sequelize.authenticate();
-    console.log('✅ Connected successfully to SQLITE database.');
-  }
-  return sequelize;
-};
 
-export { sequelize };
+    console.log('✅ Connected successfully to POSTGRESQL database.');
+    console.log(`📍 Database: ${postgresDb}`);
+    console.log(`📍 Host: ${postgresHost}`);
+    console.log(`📍 Port: ${postgresPort}`);
+
+    return sequelize;
+  } catch (error) {
+    console.error('❌ PostgreSQL connection failed.');
+    console.error('❌ Error:', error.message);
+    throw error;
+  }
+};
