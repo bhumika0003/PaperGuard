@@ -1,10 +1,14 @@
-# Secrets
+# Environment variables and secrets
 .env
 .env.*
 !.env.example
 backend/.env
 
-# Dependencies and build output
+# Dependencies
 node_modules/
+
+# Build output
 dist/
+
+# Private keys
 *.pem
