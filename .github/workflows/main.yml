@@ -1,0 +1,21 @@
+name: Deploy PaperGuard
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Verify EC2 connection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Connect to EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/devops_vap
+            echo "EC2 connection successful"
+            git status --short
+            docker compose --env-file .env -f docker-compose.prod.yml config --quiet
