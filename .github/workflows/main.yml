@@ -65,7 +65,7 @@ jobs:
           COMMAND_ID=$(aws ssm send-command \
             --instance-ids i-069cc54805a1c1d89 \
             --document-name AWS-RunShellScript \
-            --parameters 'commands=["cd /home/ubuntu/devops_vap && git status --short && docker compose --env-file .env -f docker-compose.prod.yml config --quiet"]' \
+            --parameters 'commands=["git config --global --add safe.directory /home/ubuntu/devops_vap && cd /home/ubuntu/devops_vap && git status --short && docker compose --env-file .env -f docker-compose.prod.yml config --quiet"]' \
             --query 'Command.CommandId' \
             --output text)
 
@@ -91,4 +91,3 @@ jobs:
               --output json || true
             exit 1
           fi
-
