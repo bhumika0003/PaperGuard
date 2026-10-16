@@ -1,4 +1,3 @@
-
 name: Deploy PaperGuard
 
 on:
@@ -10,46 +9,12 @@ permissions:
 
 jobs:
   check:
-    name: Verify EC2 through AWS Systems Manager
+    name: Verify EC2 deployment configuration
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Diagnose GitHub OIDC identity
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          : "${ACTIONS_ID_TOKEN_REQUEST_URL:?Missing GitHub OIDC request URL}"
-          : "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:?Missing GitHub OIDC request token}"
-
-          TOKEN=$(curl -fsS \
-            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" \
-            | python3 -c 'import json,sys; print(json.load(sys.stdin)["value"])')
-
-          export TOKEN
-
-          python3 - <<'PY'
-          import os, json, base64
-          payload = os.environ["TOKEN"].split(".")[1]
-          payload += "=" * (-len(payload) % 4)
-          claims = json.loads(base64.urlsafe_b64decode(payload))
-
-          for key in (
-              "sub",
-              "aud",
-              "repository",
-              "repository_id",
-              "repository_owner",
-              "repository_owner_id",
-              "ref",
-              "workflow_ref",
-          ):
-              print(f"{key}: {claims.get(key)}")
-          PY
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -57,7 +22,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ap-south-1
 
-      - name: Check EC2 deployment configuration
+      - name: Check EC2 configuration
         shell: bash
         run: |
           set -euo pipefail
@@ -69,25 +34,12 @@ jobs:
             --query 'Command.CommandId' \
             --output text)
 
-          echo "Command ID: $COMMAND_ID"
-          sleep 5
+          aws ssm wait command-executed \
+            --command-id "$COMMAND_ID" \
+            --instance-id i-069cc54805a1c1d89
 
           aws ssm get-command-invocation \
             --command-id "$COMMAND_ID" \
             --instance-id i-069cc54805a1c1d89 \
             --query '{Status:Status,Output:StandardOutputContent,Errors:StandardErrorContent}' \
-            --output json || true
-
-          if aws ssm wait command-executed \
-            --command-id "$COMMAND_ID" \
-            --instance-id i-069cc54805a1c1d89; then
-            echo "EC2 command succeeded."
-          else
-            echo "EC2 command failed. See the output above."
-            aws ssm get-command-invocation \
-              --command-id "$COMMAND_ID" \
-              --instance-id i-069cc54805a1c1d89 \
-              --query '{Status:Status,Output:StandardOutputContent,Errors:StandardErrorContent}' \
-              --output json || true
-            exit 1
-          fi
+            --output json
