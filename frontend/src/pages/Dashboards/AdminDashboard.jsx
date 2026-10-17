@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Navbar } from '../../components/layout/Navbar';
 import { Sidebar } from '../../components/layout/Sidebar';
 import { StatCard } from '../../components/ui/StatCard';
 import { SecurityAlertBadge } from '../../components/ui/SecurityAlertBadge';
-import { Users, UserPlus, ShieldAlert, Key, Lock, CheckCircle, XCircle, Activity, FileText, Settings, ShieldCheck } from 'lucide-react';
+import { Users, UserPlus, ShieldAlert, Key, Lock, CheckCircle, XCircle, Activity, FileText, Settings, ShieldCheck, ArrowRight } from 'lucide-react';
 import api from '../../services/api';
 import { validateEmail } from '../../utils/emailValidator';
 import { EmailInput } from '../../components/ui/EmailInput';
@@ -109,13 +110,47 @@ export const AdminDashboard = () => {
               <h1 className="text-2xl font-extrabold text-white mt-1">Admin Operations Center</h1>
               <p className="text-xs text-slate-400 mt-1">Provision user accounts, configure department access, track access statistics, and monitor security alerts.</p>
             </div>
-            <button
-              onClick={() => setShowCreateModal(true)}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-cyan-500/20 flex items-center space-x-2 self-start md:self-auto"
+            <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+              <Link
+                to="/admin/activities"
+                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 font-bold text-xs shadow-sm flex items-center space-x-2 transition"
+              >
+                <Activity className="w-4 h-4 text-cyan-400" />
+                <span>Role Activities Monitor</span>
+              </Link>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs shadow-lg shadow-cyan-500/20 flex items-center space-x-2"
+              >
+                <UserPlus className="w-4 h-4" />
+                <span>Create New User Account</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Institutional Activities Quick Banner */}
+          <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-purple-950/40 to-slate-900 border border-cyan-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
+            <div className="flex items-center space-x-3.5">
+              <div className="p-3 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex-shrink-0">
+                <Activity className="w-6 h-6 animate-pulse" />
+              </div>
+              <div>
+                <h2 className="text-base font-extrabold text-white flex items-center gap-2">
+                  <span>Cross-Role Activity Oversight Center</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">NEW</span>
+                </h2>
+                <p className="text-xs text-slate-300 mt-0.5">
+                  Live audit trail and actions monitoring for <strong className="text-cyan-400">Teachers</strong>, <strong className="text-amber-400">HODs</strong>, <strong className="text-purple-400">Principals</strong>, and <strong className="text-emerald-400">Exam Controllers</strong>.
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/admin/activities"
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-extrabold text-xs shadow-md shadow-cyan-500/20 flex items-center space-x-2 self-start sm:self-auto transition"
             >
-              <UserPlus className="w-4 h-4" />
-              <span>Create New User Account</span>
-            </button>
+              <span>Inspect All Role Activities</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
 
           {/* System Statistics Dashboard Grid (Section 9) */}

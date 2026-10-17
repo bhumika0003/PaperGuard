@@ -12,7 +12,8 @@ import {
   Shield,
   Eye,
   MessageSquare,
-  CheckCircle
+  CheckCircle,
+  Activity
 } from 'lucide-react';
 
 export const Sidebar = () => {
@@ -61,6 +62,12 @@ export const Sidebar = () => {
       roles: ['Admin', 'Auditor', 'Principal']
     },
     {
+      name: 'Role Activities Monitor',
+      path: '/admin/activities',
+      icon: Activity,
+      roles: ['Admin']
+    },
+    {
       name: 'User Management',
       path: '/users',
       icon: Users,
@@ -84,10 +91,9 @@ export const Sidebar = () => {
           <NavLink
             to="/profile"
             className={({ isActive }) =>
-              `w-full text-left p-3 rounded-2xl bg-slate-100 dark:bg-[#182232] border transition flex items-center space-x-3 shadow-sm group cursor-pointer ${
-                isActive
-                  ? 'border-cyan-500 ring-2 ring-cyan-500/20'
-                  : 'border-slate-200 dark:border-[#33435C] hover:border-cyan-400'
+              `w-full text-left p-3 rounded-2xl bg-slate-100 dark:bg-[#182232] border transition flex items-center space-x-3 shadow-sm group cursor-pointer ${isActive
+                ? 'border-cyan-500 ring-2 ring-cyan-500/20'
+                : 'border-slate-200 dark:border-[#33435C] hover:border-cyan-400'
               }`
             }
             title="Click to view and edit profile page"
@@ -119,10 +125,9 @@ export const Sidebar = () => {
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) =>
-                    `flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition duration-200 ${
-                      isActive
-                        ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-800 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/40 font-extrabold active-nav-link shadow-sm'
-                        : 'text-slate-600 dark:text-[#CBD5E1] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#222D42] hover-nav-link'
+                    `flex items-center space-x-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition duration-200 ${isActive
+                      ? 'bg-cyan-100 dark:bg-cyan-500/20 text-cyan-800 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/40 font-extrabold active-nav-link shadow-sm'
+                      : 'text-slate-600 dark:text-[#CBD5E1] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#222D42] hover-nav-link'
                     }`
                   }
                 >

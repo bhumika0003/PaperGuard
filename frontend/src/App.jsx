@@ -22,6 +22,7 @@ import { SecurityAlertsPage } from './pages/SecurityAlertsPage';
 import { SecurityInfoPage } from './pages/SecurityInfoPage';
 import { LiveChatPage } from './pages/LiveChatPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { AdminRoleActivitiesPage } from './pages/AdminRoleActivitiesPage';
 
 // Role Dashboard Dispatcher Component
 const RoleDashboardDispatcher = () => {
@@ -126,6 +127,30 @@ export default function App() {
               element={
                 <ProtectedRoute allowedRoles={['Admin']}>
                   <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/activities"
+              element={
+                <ProtectedRoute allowedRoles={['Admin']}>
+                  <AdminRoleActivitiesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/activities"
+              element={
+                <ProtectedRoute allowedRoles={['Admin']}>
+                  <AdminRoleActivitiesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teacher-exam-activity"
+              element={
+                <ProtectedRoute allowedRoles={['Admin']}>
+                  <AdminRoleActivitiesPage />
                 </ProtectedRoute>
               }
             />

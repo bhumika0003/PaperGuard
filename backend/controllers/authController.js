@@ -43,6 +43,8 @@ export const registerUser = async (req, res) => {
     if (role === 'HOD') prefix = 'HOD';
     if (role === 'Principal') prefix = 'PRN';
     if (role === 'Exam Controller') prefix = 'EXC';
+    if (role === 'Admin') prefix = 'ADM';
+    if (role === 'Auditor') prefix = 'AUD';
 
     const userId = customUserId && customUserId.trim() ? customUserId.trim() : `${prefix}-${Math.floor(1000 + Math.random() * 9000)}`;
     const userName = name || email.split('@')[0];
@@ -110,8 +112,8 @@ export const loginUser = async (req, res) => {
   const deviceInfo = req.headers['user-agent'] || 'Chrome/Windows Workstation';
 
   try {
-    if (!emailOrUserId || !password || !role) {
-      return res.status(400).json({ message: 'Email/Username, password, and role are required.' });
+    if (!emailOrUserId || !password) {
+      return res.status(400).json({ message: 'Email/Username and password are required.' });
     }
 
     if (emailOrUserId.includes('@')) {
@@ -130,13 +132,14 @@ export const loginUser = async (req, res) => {
       }
     });
 
-    const netDetails = resolveNetworkDetails(req, user ? user.userId : emailOrUserId, role);
+	const effectiveRole = user ? user.role : 'Unknown';
+    const netDetails = resolveNetworkDetails(req, user ? user.userId : emailOrUserId, effectiveRole);
 
     if (!user) {
       await AccessLog.create({
         userId: emailOrUserId || 'UNKNOWN',
         userName: emailOrUserId || 'Unknown User',
-        role: role || 'Unknown',
+        role: effectiveRole || 'Unknown',
         action: 'Login',
         date: todayStr,
         time: timeStr,
