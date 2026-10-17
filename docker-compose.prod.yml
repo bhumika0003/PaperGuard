@@ -1,0 +1,20 @@
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: securestack-app
+    ports:
+      - "8000:3000"
+      - "8001:7000"
+    environment:
+      NODE_ENV: production
+      PORT: "7000"
+      DB_DIALECT: postgres
+      DB_HOST: securestack-db.cpmaswkgg1c8.ap-south-1.rds.amazonaws.com
+      DB_PORT: "5432"
+      DB_USER: secureadmin
+      DB_PASS: ${RDS_DB_PASS:?Set RDS_DB_PASS in the server .env file}
+      DB_NAME: postgres
+    restart: unless-stopped
