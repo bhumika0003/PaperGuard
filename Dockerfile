@@ -31,10 +31,8 @@ module.exports = {
       script: "sh",
       args: "-c 'sleep 10 && exec node ./backend/server.js'",
       env: {
-        NODE_ENV: "production",
-        PORT: 7000,
-        DB_DIALECT: "postgres",
-        DB_HOST: "postgres"
+      NODE_ENV: "production",
+      PORT: 7000
       }
     },
     {
