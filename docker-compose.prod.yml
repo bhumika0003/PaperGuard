@@ -1,5 +1,6 @@
-services:
+﻿services:
   app:
+    image: paperguard-deploy-app:latest
     build:
       context: .
       dockerfile: Dockerfile
