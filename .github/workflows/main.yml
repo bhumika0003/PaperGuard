@@ -1,77 +1,19 @@
-name: Deploy PaperGuard
-
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
-
-permissions:
-  id-token: write
-  contents: read
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ap-south-1
-
-      - name: Prepare clean checkout on EC2
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          COMMAND_ID=$(aws ssm send-command \
-            --instance-ids i-069cc54805a1c1d89 \
-            --document-name AWS-RunShellScript \
-            --parameters 'commands=[
-              "set -e",
-              "if [ ! -d /home/ubuntu/paperguard-deploy/.git ]; then git clone https://github.com/bhumika0003/PaperGuard.git /home/ubuntu/paperguard-deploy; fi",
-              "git -C /home/ubuntu/paperguard-deploy fetch origin main",
-              "git -C /home/ubuntu/paperguard-deploy checkout -B main origin/main",
-              "test -f /home/ubuntu/devops_vap/.env",
-              "test -f /home/ubuntu/Dockerfile.safe",
-              "test -f /home/ubuntu/docker-compose.prod.yml.safe",
-              "echo Separate checkout and production backups verified. No restart performed."
-            ]' \
-            --query 'Command.CommandId' \
-            --output text)
-
-          echo "SSM command: $COMMAND_ID"
-
-          for attempt in $(seq 1 60); do
-            STATUS=$(aws ssm get-command-invocation \
-              --command-id "$COMMAND_ID" \
-              --instance-id i-069cc54805a1c1d89 \
-              --query Status --output text 2>/dev/null || true)
-
-            case "$STATUS" in
-              Success)
-                aws ssm get-command-invocation \
-                  --command-id "$COMMAND_ID" \
-                  --instance-id i-069cc54805a1c1d89 \
-                  --query '{Status:Status,Output:StandardOutputContent,Errors:StandardErrorContent}' \
-                  --output json
-                exit 0
-                ;;
-              Failed|Cancelled|TimedOut)
-                aws ssm get-command-invocation \
-                  --command-id "$COMMAND_ID" \
-                  --instance-id i-069cc54805a1c1d89 \
-                  --query '{Status:Status,Output:StandardOutputContent,Errors:StandardErrorContent}' \
-                  --output json
-                exit 1
-                ;;
-            esac
-            sleep 5
-          done
-
-          echo "Timed out waiting for SSM."
-          exit 1
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: securestack-app
+    ports:
+      - "8000:3000"
+      - "8001:7000"
+    environment:
+      NODE_ENV: production
+      PORT: "7000"
+      DB_DIALECT: postgres
+      DB_HOST: securestack-db.cpmaswkgg1c8.ap-south-1.rds.amazonaws.com
+      DB_PORT: "5432"
+      DB_USER: secureadmin
+      DB_PASS: ${RDS_DB_PASS:?Set RDS_DB_PASS in the server .env file}
+      DB_NAME: postgres
+    restart: unless-stopped
