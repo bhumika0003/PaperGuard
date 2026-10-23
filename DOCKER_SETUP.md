@@ -102,22 +102,22 @@ docker exec securestack-app pm2 list
 │                    (Single Docker Image)                    │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│  ┌──────────────┐              ┌──────────────┐           │
-│  │  Frontend    │              │   Backend    │           │
-│  │  (Vite Dev)  │              │  (Express)   │           │
-│  │  Port: 3000  │              │  Port: 7000  │           │
-│  └──────────────┘              └──────────────┘           │
-│        │                               │                   │
-│        └───────────────────────────────┘                   │
+│  ┌──────────────┐              ┌──────────────┐             │
+│  │  Frontend    │              │   Backend    │             │
+│  │  (Vite Dev)  │              │  (Express)   │             │
+│  │  Port: 3000  │              │  Port: 7000  │             │
+│  └──────────────┘              └──────────────┘             │
+│        │                               │                    │
+│        └───────────────────────────────┘                    │
 │                      │                                      │
-│               ┌──────▼──────┐                              │
+│               ┌──────▼──────┐                               │
 │               │  PostgreSQL  │                              │
 │               │  Port: 5432  │                              │
 │               └──────────────┘                              │
 │                                                             │
-│  Managed by: PM2 (Process Manager)                         │
-│  - backend-wait (delayed start, 10s)                       │
-│  - frontend                                                │
+│  Managed by: PM2 (Process Manager)                          │
+│  - backend-wait (delayed start, 10s)                        │
+│  - frontend                                                 │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
                         ▼

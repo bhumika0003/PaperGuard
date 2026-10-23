@@ -35,7 +35,7 @@ export const AuditorDashboard = () => {
       setAlerts(aRes.data.alerts);
     } catch (err) {
       console.error(err);
-    } flex: {
+    } finally {
       setLoading(false);
     }
   };

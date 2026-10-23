@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import { Op } from 'sequelize';
 import { User } from '../models/User.js';
 import { QuestionPaper } from '../models/QuestionPaper.js';
 import { AccessLog } from '../models/AccessLog.js';
@@ -73,7 +74,7 @@ export const createUser = async (req, res) => {
 
     const existingUser = await User.findOne({
       where: {
-        [User.sequelize.Sequelize.Op.or]: [{ email }, { userId }]
+        [Op.or]: [{ email }, { userId }]
       }
     });
 
