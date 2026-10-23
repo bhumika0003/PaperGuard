@@ -1,4 +1,4 @@
-﻿services:
+services:
   app:
     image: paperguard-deploy-app:latest
     build:
@@ -17,4 +17,5 @@
       DB_USER: secureadmin
       DB_PASS: ${RDS_DB_PASS:?Set RDS_DB_PASS in the server .env file}
       DB_NAME: postgres
+      DB_SSL: "true"
     restart: unless-stopped

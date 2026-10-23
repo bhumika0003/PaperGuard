@@ -16,7 +16,11 @@ console.log('   Database:', postgresDb);
 console.log('   Port:', postgresPort);
 console.log('   Dialect:', process.env.DB_DIALECT);
 
-const useSSL = process.env.DB_SSL === 'true';
+const isLocal = postgresHost === 'localhost' || postgresHost === '127.0.0.1' || postgresHost === 'postgres';
+const isRDS = postgresHost.includes('rds.amazonaws.com');
+const useSSL = process.env.DB_SSL === 'true' || (isRDS && process.env.DB_SSL !== 'false') || (!isLocal && process.env.DB_SSL !== 'false');
+
+console.log('   SSL Enabled:', useSSL);
 
 export const sequelize = new Sequelize(
   postgresDb,

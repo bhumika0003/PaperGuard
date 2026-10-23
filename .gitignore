@@ -3,7 +3,6 @@
 .env.*
 !.env.example
 backend/.env
-<<<<<<< HEAD
 frontend/.env
 
 # Dependencies
@@ -25,14 +24,3 @@ npm-debug.log*
 # OS files
 .DS_Store
 Thumbs.db
-=======
-
-# Dependencies
-node_modules/
-
-# Build output
-dist/
-
-# Private keys
-*.pem
->>>>>>> 36a64bb06abbfea53d1c93f14635f7c3b01d0dc0
