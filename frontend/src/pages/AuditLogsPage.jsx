@@ -5,6 +5,7 @@ import { Sidebar } from '../components/layout/Sidebar';
 import { Link } from 'react-router-dom';
 import { History, Search, Filter, User, Calendar, Clock, Monitor, ShieldCheck, AlertTriangle, Cpu, Lock } from 'lucide-react';
 import api from '../services/api';
+import { formatTimeWithAMPM } from '../utils/dateFormatter';
 
 export const AuditLogsPage = () => {
   const { user } = useAuth();
@@ -212,7 +213,7 @@ export const AuditLogsPage = () => {
                           <span>{log.date}</span>
                         </div>
                         <div className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold pl-4">
-                          {log.time}
+                          {formatTimeWithAMPM(log.time)}
                         </div>
                       </td>
 

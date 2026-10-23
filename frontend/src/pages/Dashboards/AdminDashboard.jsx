@@ -1,11 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Navbar } from '../../components/layout/Navbar';
 import { Sidebar } from '../../components/layout/Sidebar';
 import { StatCard } from '../../components/ui/StatCard';
 import { SecurityAlertBadge } from '../../components/ui/SecurityAlertBadge';
-import { Users, UserPlus, ShieldAlert, Key, Lock, CheckCircle, XCircle, Activity, FileText, Settings, ShieldCheck, ArrowRight } from 'lucide-react';
+import { SuspiciousActivityAlertModal } from '../../components/ui/SuspiciousActivityAlertModal';
+import { formatTimeWithAMPM } from '../../utils/dateFormatter';
+import {
+  Users,
+  UserPlus,
+  ShieldAlert,
+  Key,
+  Lock,
+  CheckCircle,
+  XCircle,
+  Activity,
+  FileText,
+  Settings,
+  ShieldCheck,
+  ArrowRight,
+  AlertTriangle,
+  Radio,
+  ExternalLink
+} from 'lucide-react';
 import api from '../../services/api';
 import { validateEmail } from '../../utils/emailValidator';
 import { EmailInput } from '../../components/ui/EmailInput';
@@ -16,6 +34,11 @@ export const AdminDashboard = () => {
   const [stats, setStats] = useState({});
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Suspicious Activity Alert Modal State
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [simulating, setSimulating] = useState(false);
+  const previousAlertCountRef = useRef(0);
 
   // New User Form State
   const [name, setName] = useState('');
@@ -30,8 +53,30 @@ export const AdminDashboard = () => {
   const [resetTargetUser, setResetTargetUser] = useState(null);
   const [newPassword, setNewPassword] = useState('');
 
-  const fetchAdminData = async () => {
-    setLoading(true);
+  // Audio threat chime
+  const playThreatChime = () => {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.36);
+    } catch (e) {
+      // Audio context might be restricted before user gesture
+    }
+  };
+
+  const fetchAdminData = async (isPolling = false) => {
+    if (!isPolling) setLoading(true);
     try {
       const [uRes, sRes, aRes] = await Promise.all([
         api.get('/users'),
@@ -40,17 +85,69 @@ export const AdminDashboard = () => {
       ]);
       setUsersList(uRes.data.users);
       setStats(sRes.data.stats);
-      setAlerts(aRes.data.alerts);
+      const incomingAlerts = aRes.data.alerts || [];
+      setAlerts(incomingAlerts);
+
+      const activeIncoming = incomingAlerts.filter(a => a.status === 'Active');
+
+      // Auto-popup alert on initial load if active threats exist, OR on polling if a new threat was added!
+      if (activeIncoming.length > 0) {
+        if (!isPolling) {
+          setIsAlertModalOpen(true);
+          playThreatChime();
+        } else if (activeIncoming.length > previousAlertCountRef.current) {
+          setIsAlertModalOpen(true);
+          playThreatChime();
+        }
+      }
+      previousAlertCountRef.current = activeIncoming.length;
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      if (!isPolling) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchAdminData();
+    const interval = setInterval(() => {
+      fetchAdminData(true);
+    }, 12000); // Live poll every 12s
+    return () => clearInterval(interval);
   }, []);
+
+  const handleSimulateAlert = async () => {
+    setSimulating(true);
+    try {
+      await api.post('/alerts/simulate');
+      await fetchAdminData(true);
+      setIsAlertModalOpen(true);
+      playThreatChime();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to simulate alert');
+    } finally {
+      setSimulating(false);
+    }
+  };
+
+  const handleAlertUpdated = (alertId, newStatus) => {
+    setAlerts((prev) =>
+      prev.map((a) => (a.alertId === alertId ? { ...a, status: newStatus } : a))
+    );
+    api.get('/users/stats').then((res) => {
+      if (res.data?.stats) setStats(res.data.stats);
+    }).catch(() => {});
+  };
+
+  const handleUserStatusToggled = (targetUserId) => {
+    setUsersList((prev) =>
+      prev.map((u) =>
+        u.userId === targetUserId
+          ? { ...u, status: u.status === 'Active' ? 'Disabled' : 'Active' }
+          : u
+      )
+    );
+  };
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
@@ -94,6 +191,8 @@ export const AdminDashboard = () => {
     }
   };
 
+  const activeAlerts = alerts.filter((a) => a.status === 'Active');
+
   return (
     <div className="min-h-screen bg-cyber-dark text-slate-100 flex flex-col">
       <Navbar />
@@ -111,6 +210,15 @@ export const AdminDashboard = () => {
               <p className="text-xs text-slate-400 mt-1">Provision user accounts, configure department access, track access statistics, and monitor security alerts.</p>
             </div>
             <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
+              <button
+                onClick={handleSimulateAlert}
+                disabled={simulating}
+                className="px-3.5 py-2.5 rounded-xl bg-rose-950/80 hover:bg-rose-900 text-rose-300 border border-rose-500/40 font-bold text-xs shadow-sm flex items-center space-x-1.5 transition cursor-pointer"
+                title="Test trigger a suspicious anomaly alert popup for demonstration"
+              >
+                <AlertTriangle className="w-4 h-4 text-rose-400" />
+                <span>{simulating ? 'Simulating Threat...' : 'Simulate Threat Alert'}</span>
+              </button>
               <Link
                 to="/admin/activities"
                 className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 font-bold text-xs shadow-sm flex items-center space-x-2 transition"
@@ -127,6 +235,56 @@ export const AdminDashboard = () => {
               </button>
             </div>
           </div>
+
+          {/* Active Suspicious Activities Alert Banner */}
+          {activeAlerts.length > 0 && (
+            <div className="p-5 rounded-2xl bg-gradient-to-r from-rose-950 via-rose-900/90 to-slate-900 border-2 border-rose-500/70 shadow-2xl shadow-rose-950/70 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in duration-300">
+              <div className="flex items-start sm:items-center space-x-4">
+                <div className="relative p-3 rounded-2xl bg-rose-500/20 border border-rose-500 text-rose-400 flex-shrink-0 animate-pulse">
+                  <ShieldAlert className="w-8 h-8 text-rose-500" />
+                  <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-rose-500"></span>
+                  </span>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-base font-black text-white tracking-wide">
+                      SUSPICIOUS ACTIVITY ALERT
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-black bg-rose-600 text-white shadow-sm animate-bounce">
+                      {activeAlerts.length} ACTIVE THREAT{activeAlerts.length > 1 ? 'S' : ''}
+                    </span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+                      ADMIN ATTENTION REQUIRED
+                    </span>
+                  </div>
+                  <p className="text-xs text-rose-200 mt-1">
+                    Latest Incident: <strong className="text-white font-bold">{activeAlerts[0]?.activity}</strong> by suspect{' '}
+                    <strong className="text-rose-100">{activeAlerts[0]?.userName} ({activeAlerts[0]?.userId})</strong>{' '}
+                    at <span className="font-mono text-cyan-300 font-bold">{formatTimeWithAMPM(activeAlerts[0]?.detectedTime)}</span>
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 self-start md:self-auto flex-wrap">
+                <button
+                  onClick={() => setIsAlertModalOpen(true)}
+                  className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white font-black text-xs shadow-lg shadow-rose-600/40 flex items-center space-x-2 transition cursor-pointer"
+                >
+                  <ShieldAlert className="w-4 h-4" />
+                  <span>Inspect Threat Pop-up</span>
+                </button>
+                <Link
+                  to="/alerts"
+                  className="px-3.5 py-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-rose-300 border border-rose-500/40 font-bold text-xs flex items-center space-x-1.5 transition"
+                >
+                  <span>All Alerts ({alerts.length})</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* Institutional Activities Quick Banner */}
           <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-purple-950/40 to-slate-900 border border-cyan-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
@@ -161,7 +319,19 @@ export const AdminDashboard = () => {
             <StatCard title="Access Attempts" value={stats.accessAttempts || 0} icon={Activity} color="purple" />
             <StatCard title="Download Requests" value={stats.downloadRequests || 0} icon={FileText} color="cyan" />
             <StatCard title="Approved Downloads" value={stats.approvedDownloads || 0} icon={CheckCircle} color="emerald" />
-            <StatCard title="Suspicious Activities" value={stats.suspiciousActivities || 0} icon={ShieldAlert} color="rose" />
+            <div
+              onClick={() => activeAlerts.length > 0 && setIsAlertModalOpen(true)}
+              className={activeAlerts.length > 0 ? 'cursor-pointer group' : ''}
+              title={activeAlerts.length > 0 ? 'Click to open suspicious activities alert pop-up' : 'No active alerts'}
+            >
+              <StatCard
+                title="Suspicious Activities"
+                value={activeAlerts.length > 0 ? `${activeAlerts.length} Active` : (stats.suspiciousActivities || 0)}
+                icon={ShieldAlert}
+                color="rose"
+                trend={activeAlerts.length > 0 ? 'Click to View Threats' : undefined}
+              />
+            </div>
             <StatCard title="Audit Storage" value="Immutable" icon={Lock} trend="Deletion Disabled" color="purple" />
           </div>
 
@@ -297,6 +467,15 @@ export const AdminDashboard = () => {
           </div>
         </div>
       )}
+
+      {/* Suspicious Activity Threat Pop-up Modal */}
+      <SuspiciousActivityAlertModal
+        alerts={activeAlerts}
+        isOpen={isAlertModalOpen}
+        onClose={() => setIsAlertModalOpen(false)}
+        onAlertUpdated={handleAlertUpdated}
+        onUserStatusToggled={handleUserStatusToggled}
+      />
 
     </div>
   );

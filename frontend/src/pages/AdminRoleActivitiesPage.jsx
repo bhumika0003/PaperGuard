@@ -33,6 +33,7 @@ import {
   X
 } from 'lucide-react';
 import api from '../services/api';
+import { formatTimeWithAMPM } from '../utils/dateFormatter';
 
 export const AdminRoleActivitiesPage = () => {
   const { user } = useAuth();
@@ -904,7 +905,7 @@ export const AdminRoleActivitiesPage = () => {
                             </div>
                             <div className="flex items-center space-x-1 text-slate-400 text-[10px] mt-0.5">
                               <Clock className="w-3 h-3 text-slate-400" />
-                              <span>{log.time || (log.createdAt ? new Date(log.createdAt).toLocaleTimeString() : '12:00:00')}</span>
+                              <span>{formatTimeWithAMPM(log.time) || (log.createdAt ? new Date(log.createdAt).toLocaleTimeString('en-US', { hour12: true }) : '12:00:00 PM')}</span>
                             </div>
                           </td>
 
@@ -1004,7 +1005,7 @@ export const AdminRoleActivitiesPage = () => {
                 <span className="text-[10px] uppercase font-bold text-slate-400 block">Execution Outcome</span>
                 <span className="font-bold text-emerald-600 dark:text-emerald-400 text-sm">{inspectLog.result || 'Success'}</span>
                 <div className="text-[11px] text-slate-500 font-mono">
-                  {inspectLog.date} at {inspectLog.time}
+                  {inspectLog.date} at {formatTimeWithAMPM(inspectLog.time)}
                 </div>
               </div>
 

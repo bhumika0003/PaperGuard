@@ -4,6 +4,7 @@ import { Navbar } from '../components/layout/Navbar';
 import { Sidebar } from '../components/layout/Sidebar';
 import { User, ShieldCheck, Clock, Activity, ArrowLeft, Calendar, Lock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import api from '../services/api';
+import { formatTimeWithAMPM } from '../utils/dateFormatter';
 
 export const UserProfileAuditPage = () => {
   const { userId } = useParams();
@@ -120,7 +121,7 @@ export const UserProfileAuditPage = () => {
                   {/* Card Content */}
                   <div className="flex-1 p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-1.5 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="font-mono font-bold text-cyan-400 text-sm">{item.timeDisplay}</span>
+                      <span className="font-mono font-bold text-cyan-400 text-sm">{formatTimeWithAMPM(item.timeDisplay)}</span>
                       <span className="text-slate-500 font-mono text-[11px]">{item.dateDisplay}</span>
                     </div>
 

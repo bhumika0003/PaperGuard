@@ -7,8 +7,8 @@ import { SecureViewerModal } from '../../components/ui/SecureViewerModal';
 import { HashIntegrityModal } from '../../components/ui/HashIntegrityModal';
 import { StatCard } from '../../components/ui/StatCard';
 import { ShieldCheck, Eye, Hash, ShieldAlert, AlertTriangle, History, Search, Lock, User, Activity } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import api from '../../services/api';
+import { formatTimeWithAMPM } from '../../utils/dateFormatter';
 
 export const AuditorDashboard = () => {
   const { user } = useAuth();
@@ -166,7 +166,7 @@ export const AuditorDashboard = () => {
                       </td>
                       <td className="py-3.5 px-4 font-semibold text-slate-200">{log.action}</td>
                       <td className="py-3.5 px-4 font-mono text-cyan-300">{log.paperId || 'N/A'}</td>
-                      <td className="py-3.5 px-4 text-slate-400 font-mono">{log.date} {log.time}</td>
+                      <td className="py-3.5 px-4 text-slate-400 font-mono">{log.date} {formatTimeWithAMPM(log.time)}</td>
                       <td className="py-3.5 px-4 text-slate-400 font-mono text-[11px] max-w-[150px] truncate">{log.deviceInfo} ({log.ipAddress})</td>
                       <td className="py-3.5 px-4">
                         <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${log.result === 'Success' || log.result === 'Approved' ? 'bg-emerald-950 text-emerald-400 border border-emerald-500/30' : 'bg-rose-950 text-rose-400 border border-rose-500/30'}`}>

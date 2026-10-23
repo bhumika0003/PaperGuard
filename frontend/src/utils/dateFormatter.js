@@ -45,3 +45,27 @@ export const formatMessageTime = (dateInput) => {
     return `${dateStr} · ${timeStr}`;
   }
 };
+
+/**
+ * Formats a time string (e.g., "08:55:57" or "20:55:57") into 12-hour AM/PM format (e.g., "08:55:57 AM" or "08:55:57 PM").
+ * If the string already contains AM/PM, it returns it as is.
+ */
+export const formatTimeWithAMPM = (timeStr) => {
+  if (!timeStr) return '';
+  const trimmed = String(timeStr).trim();
+  if (/am|pm/i.test(trimmed)) return trimmed;
+
+  const parts = trimmed.split(':');
+  if (parts.length >= 2) {
+    let hours = parseInt(parts[0], 10);
+    if (isNaN(hours)) return trimmed;
+    const minutes = parts[1];
+    const seconds = parts[2] ? `:${parts[2]}` : '';
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const formattedHours = hours < 10 ? `0${hours}` : hours;
+    return `${formattedHours}:${minutes}${seconds} ${ampm}`;
+  }
+  return trimmed;
+};
