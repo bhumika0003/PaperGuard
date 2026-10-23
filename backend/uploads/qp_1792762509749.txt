@@ -1,0 +1,2 @@
+Question 1: Explain virtual memory management.
+Question 2: What is thrashing?

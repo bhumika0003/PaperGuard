@@ -18,7 +18,9 @@ import {
   Sun, 
   Moon, 
   Cloud,
-  ChevronDown 
+  ChevronDown,
+  KeyRound,
+  CheckCircle 
 } from 'lucide-react';
 import { ForgotPasswordModal } from '../components/ui/ForgotPasswordModal';
 import { EmailInput } from '../components/ui/EmailInput';
@@ -26,7 +28,7 @@ import { validateEmail } from '../utils/emailValidator';
 import { AppLogo } from '../components/ui/AppLogo';
 
 export const LoginPage = () => {
-  const { user, login, register, loading } = useAuth();
+  const { user, login, register, resetPassword, loading } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -35,26 +37,35 @@ export const LoginPage = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  const [isRegisterMode, setIsRegisterMode] = useState(true);
+  const [authMode, setAuthMode] = useState('login'); // 'login' | 'register' | 'forgot'
+  const isRegisterMode = authMode === 'register';
+  const isForgotMode = authMode === 'forgot';
+
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showResetNewPassword, setShowResetNewPassword] = useState(false);
+  const [showResetConfirmPassword, setShowResetConfirmPassword] = useState(false);
 
   const [name, setName] = useState('');
   const [emailOrUserId, setEmailOrUserId] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [resetNewPassword, setResetNewPassword] = useState('');
+  const [resetConfirmPassword, setResetConfirmPassword] = useState('');
   const [role, setRole] = useState('Teacher (Upload & Request Access)');
   const [department, setDepartment] = useState('Computer Science');
   const [customUserId, setCustomUserId] = useState('');
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   // Password Security Criteria Validation
+  const activePassword = isForgotMode ? resetNewPassword : password;
   const criteria = {
-    length: password.length >= 8,
-    uppercase: /[A-Z]/.test(password),
-    lowercase: /[a-z]/.test(password),
-    number: /[0-9]/.test(password),
-    special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
+    length: activePassword.length >= 8,
+    uppercase: /[A-Z]/.test(activePassword),
+    lowercase: /[a-z]/.test(activePassword),
+    number: /[0-9]/.test(activePassword),
+    special: /[!@#$%^&*(),.?":{}|<>]/.test(activePassword)
   };
 
   const getCleanRole = (selectedRole) => {
@@ -62,16 +73,19 @@ export const LoginPage = () => {
     if (selectedRole.includes('HOD')) return 'HOD';
     if (selectedRole.includes('Principal')) return 'Principal';
     if (selectedRole.includes('Exam Controller')) return 'Exam Controller';
+    if (selectedRole.includes('Admin')) return 'Admin';
+    if (selectedRole.includes('Auditor')) return 'Auditor';
     return selectedRole;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
 
     const cleanRole = getCleanRole(role);
 
-    if (isRegisterMode) {
+    if (authMode === 'register') {
       if (!name || !emailOrUserId || !password) {
         setError('Please fill in all required fields.');
         return;
@@ -87,6 +101,39 @@ export const LoginPage = () => {
       const result = await register(name, emailOrUserId, phone || '+91 98765 43210', password, cleanRole, department, customUserId);
       if (result.success) {
         navigate('/dashboard');
+      } else {
+        setError(result.error);
+      }
+    } else if (authMode === 'forgot') {
+      if (!emailOrUserId) {
+        setError('Please enter your institutional email address or User ID.');
+        return;
+      }
+
+      if (emailOrUserId.includes('@')) {
+        const emailCheck = validateEmail(emailOrUserId);
+        if (!emailCheck.isValid) {
+          setError(emailCheck.error);
+          return;
+        }
+      }
+
+      if (!resetNewPassword || resetNewPassword.length < 6) {
+        setError('New password must be at least 6 characters long.');
+        return;
+      }
+
+      if (resetNewPassword !== resetConfirmPassword) {
+        setError('New password and confirm password do not match.');
+        return;
+      }
+
+      const result = await resetPassword(emailOrUserId, resetNewPassword);
+      if (result.success) {
+        setSuccessMsg('Password reset successfully! Logging you in...');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1200);
       } else {
         setError(result.error);
       }
@@ -201,14 +248,52 @@ export const LoginPage = () => {
               <span>Role-Based Access Verification Portal</span>
             </div>
 
+            {/* Mode Switcher Tabs: Sign In | Create Account | Forgot Password */}
+            <div className="flex items-center justify-center p-1 bg-slate-100 dark:bg-slate-800/80 rounded-2xl mb-5 border border-slate-200/80 dark:border-slate-700/60 shadow-inner">
+              <button
+                type="button"
+                onClick={() => { setAuthMode('login'); setError(''); setSuccessMsg(''); }}
+                className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                  authMode === 'login'
+                    ? 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                }`}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => { setAuthMode('register'); setError(''); setSuccessMsg(''); }}
+                className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                  authMode === 'register'
+                    ? 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                }`}
+              >
+                Create Account
+              </button>
+              <button
+                type="button"
+                onClick={() => { setAuthMode('forgot'); setError(''); setSuccessMsg(''); }}
+                className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                  authMode === 'forgot'
+                    ? 'bg-white dark:bg-slate-900 text-cyan-600 dark:text-cyan-400 shadow-sm'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                }`}
+              >
+                Forgot Password
+              </button>
+            </div>
+
             <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              {isRegisterMode ? 'Create Account' : 'Sign In'}
+              {authMode === 'register' && 'Create Account'}
+              {authMode === 'login' && 'Sign In'}
+              {authMode === 'forgot' && 'Reset Account Password'}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-xs mx-auto font-medium">
-              {isRegisterMode 
-                ? 'Register for authorized access to the paper leak prevention portal.'
-                : 'Enter your credentials to access the paper leak prevention portal.'
-              }
+              {authMode === 'register' && 'Register for authorized access to the paper leak prevention portal.'}
+              {authMode === 'login' && 'Enter your credentials to access the paper leak prevention portal.'}
+              {authMode === 'forgot' && 'Enter your institutional email/ID and set a new password on this page.'}
             </p>
           </div>
 
@@ -219,11 +304,18 @@ export const LoginPage = () => {
             </div>
           )}
 
+          {successMsg && (
+            <div className="mb-5 p-3.5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs flex items-center space-x-2.5 shadow-sm">
+              <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+              <span className="font-semibold">{successMsg}</span>
+            </div>
+          )}
+
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             
             {/* Full Name (In Create Account Mode) */}
-            {isRegisterMode && (
+            {authMode === 'register' && (
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                   Full Name
@@ -246,50 +338,132 @@ export const LoginPage = () => {
             <EmailInput
               value={emailOrUserId}
               onChange={(e) => setEmailOrUserId(e.target.value)}
-              label={isRegisterMode ? 'Institutional Email Address' : 'Institutional Email Address / Unique ID'}
-              placeholder={isRegisterMode ? 'e.g. aturing@university.edu' : 'e.g. aturing@university.edu or TCH-101'}
+              label={authMode === 'register' ? 'Institutional Email Address' : 'Institutional Email Address / Unique ID'}
+              placeholder={authMode === 'register' ? 'e.g. aturing@university.edu' : 'e.g. aturing@university.edu or TCH-101'}
               required={true}
-              showValidationMessage={isRegisterMode || emailOrUserId.includes('@')}
+              showValidationMessage={authMode === 'register' || emailOrUserId.includes('@')}
             />
 
-            {/* Password */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  {isRegisterMode ? 'Create Strong Password' : 'Password'}
-                </label>
-                {!isRegisterMode && (
+            {/* Password (for Sign In or Register) */}
+            {authMode !== 'forgot' && (
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                    {authMode === 'register' ? 'Create Strong Password' : 'Password'}
+                  </label>
+                  {authMode === 'login' && (
+                    <button
+                      type="button"
+                      onClick={() => { setAuthMode('forgot'); setError(''); setSuccessMsg(''); }}
+                      className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 hover:underline cursor-pointer"
+                    >
+                      Forgot Password?
+                    </button>
+                  )}
+                </div>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={authMode === 'register' ? 'Enter minimum 8 character password' : 'Enter your password'}
+                    className="w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white focus:border-cyan-500 text-slate-800 dark:text-white text-xs sm:text-sm placeholder-slate-400 outline-none transition shadow-sm"
+                    required
+                  />
                   <button
                     type="button"
-                    onClick={() => setIsForgotPasswordOpen(true)}
-                    className="text-xs font-semibold text-cyan-600 dark:text-cyan-400 hover:underline cursor-pointer"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                    title={showPassword ? "Hide password" : "Show password"}
                   >
-                    Forgot Password?
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
-                )}
+                </div>
               </div>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder={isRegisterMode ? 'Enter minimum 8 character password' : 'Enter your password'}
-                  className="w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white focus:border-cyan-500 text-slate-800 dark:text-white text-xs sm:text-sm placeholder-slate-400 outline-none transition shadow-sm"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
+            )}
+
+            {/* Forgot Password Mode: New Password & Confirm Password with Show/Hide Toggles */}
+            {authMode === 'forgot' && (
+              <>
+                {/* New Password */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      New Password
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-medium">Min 6-8 chars</span>
+                  </div>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                    <input
+                      type={showResetNewPassword ? 'text' : 'password'}
+                      value={resetNewPassword}
+                      onChange={(e) => setResetNewPassword(e.target.value)}
+                      placeholder="Enter new secure password"
+                      className="w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white focus:border-cyan-500 text-slate-800 dark:text-white text-xs sm:text-sm placeholder-slate-400 outline-none transition shadow-sm"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowResetNewPassword(!showResetNewPassword)}
+                      className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                      title={showResetNewPassword ? "Hide password" : "Show password"}
+                    >
+                      {showResetNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Confirm New Password */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      Confirm New Password
+                    </label>
+                    {resetConfirmPassword && (
+                      <span className={`text-[10px] font-bold flex items-center gap-1 ${
+                        resetNewPassword === resetConfirmPassword ? 'text-emerald-500' : 'text-rose-500'
+                      }`}>
+                        {resetNewPassword === resetConfirmPassword ? (
+                          <>
+                            <Check className="w-3 h-3 stroke-[3]" />
+                            <span>Passwords match</span>
+                          </>
+                        ) : (
+                          <>
+                            <X className="w-3 h-3 stroke-[3]" />
+                            <span>Passwords do not match</span>
+                          </>
+                        )}
+                      </span>
+                    )}
+                  </div>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                    <input
+                      type={showResetConfirmPassword ? 'text' : 'password'}
+                      value={resetConfirmPassword}
+                      onChange={(e) => setResetConfirmPassword(e.target.value)}
+                      placeholder="Re-enter new password to confirm"
+                      className="w-full pl-10 pr-10 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white focus:border-cyan-500 text-slate-800 dark:text-white text-xs sm:text-sm placeholder-slate-400 outline-none transition shadow-sm"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowResetConfirmPassword(!showResetConfirmPassword)}
+                      className="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                      title={showResetConfirmPassword ? "Hide password" : "Show password"}
+                    >
+                      {showResetConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* SECURITY POLICY CRITERIA Box */}
-            {isRegisterMode && (
+            {(authMode === 'register' || authMode === 'forgot') && (
               <div className="bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 text-xs space-y-2.5 shadow-inner">
                 <span className="block text-[10px] font-extrabold tracking-wider uppercase text-slate-500 dark:text-slate-400">
                   SECURITY POLICY CRITERIA:
@@ -355,28 +529,32 @@ export const LoginPage = () => {
               </div>
             )}
 
-            {/* Select Authorized Role Dropdown */}
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                Select Authorized Role
-              </label>
-              <div className="relative">
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white focus:border-cyan-500 text-slate-800 dark:text-white text-xs sm:text-sm font-semibold outline-none transition shadow-sm appearance-none cursor-pointer pr-10"
-                >
-                  <option value="Teacher (Upload & Request Access)">Teacher (Upload & Request Access)</option>
-                  <option value="HOD (Approve & Verification)">HOD (Approve & Verification)</option>
-                  <option value="Principal (Final Authorization)">Principal (Final Authorization)</option>
-                  <option value="Exam Controller (Master Access)">Exam Controller (Master Access)</option>
-                </select>
-                <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
+            {/* Select Authorized Role Dropdown (In Sign In & Register) */}
+            {authMode !== 'forgot' && (
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Select Authorized Role
+                </label>
+                <div className="relative">
+                  <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 focus:bg-white focus:border-cyan-500 text-slate-800 dark:text-white text-xs sm:text-sm font-semibold outline-none transition shadow-sm appearance-none cursor-pointer pr-10"
+                  >
+                    <option value="Teacher (Upload & Request Access)">Teacher (Upload & Request Access)</option>
+                    <option value="HOD (Approve & Verification)">HOD (Approve & Verification)</option>
+                    <option value="Principal (Final Authorization)">Principal (Final Authorization)</option>
+                    <option value="Exam Controller (Master Access)">Exam Controller (Master Access)</option>
+                    <option value="Admin (System Administrator)">Admin (System Administrator)</option>
+                    <option value="Auditor (Compliance & Security)">Auditor (Compliance & Security)</option>
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-3.5 pointer-events-none" />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Department (In Create Account Mode) */}
-            {isRegisterMode && (
+            {authMode === 'register' && (
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                   Department
@@ -402,10 +580,15 @@ export const LoginPage = () => {
             >
               {loading ? (
                 <span className="animate-pulse">Processing...</span>
-              ) : isRegisterMode ? (
+              ) : authMode === 'register' ? (
                 <>
                   <span>Create Verified Account</span>
                   <ArrowRight className="w-4 h-4" />
+                </>
+              ) : authMode === 'forgot' ? (
+                <>
+                  <span>Reset Password & Sign In</span>
+                  <CheckCircle className="w-4 h-4" />
                 </>
               ) : (
                 <>
@@ -419,16 +602,36 @@ export const LoginPage = () => {
 
           {/* Account Switcher Footer */}
           <div className="mt-6 pt-5 border-t border-slate-100 dark:border-slate-800/80 text-center space-y-3">
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-              {isRegisterMode ? 'Already have an authorized account?' : 'Don\'t have an authorized account?'}
-              <button
-                type="button"
-                onClick={() => { setIsRegisterMode(!isRegisterMode); setError(''); }}
-                className="ml-2 font-bold text-cyan-600 dark:text-cyan-400 hover:underline px-2.5 py-1 rounded-lg border border-cyan-500/30 bg-cyan-50 dark:bg-cyan-950/40 text-xs inline-block transition cursor-pointer"
-              >
-                {isRegisterMode ? 'Sign In' : 'Create Account'}
-              </button>
-            </p>
+            {authMode === 'forgot' ? (
+              <div className="flex items-center justify-center gap-3 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('login'); setError(''); setSuccessMsg(''); }}
+                  className="font-bold text-cyan-600 dark:text-cyan-400 hover:underline px-2.5 py-1 rounded-lg border border-cyan-500/30 bg-cyan-50 dark:bg-cyan-950/40 text-xs inline-block transition cursor-pointer"
+                >
+                  ← Back to Sign In
+                </button>
+                <span>•</span>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('register'); setError(''); setSuccessMsg(''); }}
+                  className="font-bold text-slate-600 dark:text-slate-300 hover:underline text-xs inline-block transition cursor-pointer"
+                >
+                  Create Account
+                </button>
+              </div>
+            ) : (
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                {authMode === 'register' ? 'Already have an authorized account?' : 'Don\'t have an authorized account?'}
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode(authMode === 'register' ? 'login' : 'register'); setError(''); setSuccessMsg(''); }}
+                  className="ml-2 font-bold text-cyan-600 dark:text-cyan-400 hover:underline px-2.5 py-1 rounded-lg border border-cyan-500/30 bg-cyan-50 dark:bg-cyan-950/40 text-xs inline-block transition cursor-pointer"
+                >
+                  {authMode === 'register' ? 'Sign In' : 'Create Account'}
+                </button>
+              </p>
+            )}
 
             <div className="text-[11px] font-mono text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 pt-1">
               <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />

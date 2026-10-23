@@ -142,18 +142,18 @@ export const AuditLogsPage = () => {
               </span>
             </div>
 
-            <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-[#33435C]">
+            <div className="overflow-auto max-h-[620px] rounded-2xl border border-slate-200 dark:border-[#33435C] relative shadow-sm scroll-smooth">
               <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-slate-100/90 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C] text-slate-700 dark:text-slate-300 font-black uppercase text-[11px] tracking-wider">
-                    <th className="py-3.5 px-4">USER</th>
-                    <th className="py-3.5 px-4">ROLE</th>
-                    <th className="py-3.5 px-4">IP ADDRESS</th>
-                    <th className="py-3.5 px-4">MAC ADDRESS</th>
-                    <th className="py-3.5 px-4">ACTION</th>
-                    <th className="py-3.5 px-4">PAPER ID</th>
-                    <th className="py-3.5 px-4">DATE & TIME</th>
-                    <th className="py-3.5 px-4">STATUS</th>
+                <thead className="sticky top-0 z-20 bg-slate-100 dark:bg-[#182232] shadow-sm">
+                  <tr className="bg-slate-100 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C] text-slate-700 dark:text-slate-300 font-black uppercase text-[11px] tracking-wider">
+                    <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-100 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">USER</th>
+                    <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-100 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">ROLE</th>
+                    <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-100 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">IP ADDRESS</th>
+                    <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-100 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">MAC ADDRESS</th>
+                    <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-100 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">ACTION</th>
+                    <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-100 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">PAPER ID</th>
+                    <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-100 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">DATE & TIME</th>
+                    <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-100 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">STATUS</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-[#33435C]/60 bg-white dark:bg-[#151B2E]">

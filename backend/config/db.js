@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config({ override: false });
 
-const postgresDb = process.env.DB_NAME || 'postgres';
+const postgresDb = process.env.DB_NAME || 'secure_paper_db';
 const postgresUser = process.env.DB_USER || 'postgres';
 const postgresPass = process.env.DB_PASS || 'postgres';
 const postgresHost = process.env.DB_HOST || 'localhost';
@@ -16,6 +16,8 @@ console.log('   Database:', postgresDb);
 console.log('   Port:', postgresPort);
 console.log('   Dialect:', process.env.DB_DIALECT);
 
+const useSSL = process.env.DB_SSL === 'true';
+
 export const sequelize = new Sequelize(
   postgresDb,
   postgresUser,
@@ -25,12 +27,14 @@ export const sequelize = new Sequelize(
     port: postgresPort,
     dialect: 'postgres',
     logging: false,
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false
-      }
-    }
+    dialectOptions: useSSL
+      ? {
+          ssl: {
+            require: true,
+            rejectUnauthorized: false
+          }
+        }
+      : {}
   }
 );
 

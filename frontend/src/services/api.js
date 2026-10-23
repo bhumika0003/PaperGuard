@@ -1,10 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  baseURL: '/api'
 });
 
 api.interceptors.request.use(
@@ -12,6 +9,9 @@ api.interceptors.request.use(
     const token = localStorage.getItem('sp_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
     }
     return config;
   },

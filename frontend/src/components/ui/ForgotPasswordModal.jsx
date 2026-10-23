@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { KeyRound, Lock, User, AlertTriangle, CheckCircle, ArrowRight, X } from 'lucide-react';
+import { KeyRound, Lock, User, AlertTriangle, CheckCircle, ArrowRight, X, Eye, EyeOff } from 'lucide-react';
 import api from '../../services/api';
 import { validateEmail } from '../../utils/emailValidator';
 
@@ -7,6 +7,8 @@ export const ForgotPasswordModal = ({ isOpen, onClose }) => {
   const [emailOrUserId, setEmailOrUserId] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -134,13 +136,21 @@ export const ForgotPasswordModal = ({ isOpen, onClose }) => {
             <div className="relative">
               <Lock className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
               <input
-                type="password"
+                type={showNewPassword ? 'text' : 'password'}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Enter new password (min 6 chars)"
-                className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-900 border border-slate-800 focus:border-cyan-500 text-white outline-none transition"
+                className="w-full pl-8 pr-10 py-2 rounded-xl bg-slate-900 border border-slate-800 focus:border-cyan-500 text-white outline-none transition"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute right-3 top-2.5 text-slate-400 hover:text-white transition cursor-pointer"
+                title={showNewPassword ? "Hide password" : "Show password"}
+              >
+                {showNewPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+              </button>
             </div>
           </div>
 
@@ -152,13 +162,21 @@ export const ForgotPasswordModal = ({ isOpen, onClose }) => {
             <div className="relative">
               <Lock className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
               <input
-                type="password"
+                type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Re-enter new password"
-                className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-900 border border-slate-800 focus:border-cyan-500 text-white outline-none transition"
+                className="w-full pl-8 pr-10 py-2 rounded-xl bg-slate-900 border border-slate-800 focus:border-cyan-500 text-white outline-none transition"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-2.5 text-slate-400 hover:text-white transition cursor-pointer"
+                title={showConfirmPassword ? "Hide password" : "Show password"}
+              >
+                {showConfirmPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+              </button>
             </div>
           </div>
 

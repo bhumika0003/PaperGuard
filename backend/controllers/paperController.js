@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { QuestionPaper } from '../models/QuestionPaper.js';
 import { AccessLog } from '../models/AccessLog.js';
 import { DownloadRequest } from '../models/DownloadRequest.js';
@@ -8,6 +9,13 @@ import { generateFileHash, generateTextHash, verifyIntegrity } from '../services
 import { inspectSecurityAnomaly } from '../services/securityDetector.js';
 import { generatePdfFromTextContent } from '../utils/pdfGenerator.js';
 import { resolveNetworkDetails } from '../utils/networkResolver.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadDir = path.resolve(__dirname, '../uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 export const uploadQuestionPaper = async (req, res) => {
   try {
@@ -40,7 +48,7 @@ export const uploadQuestionPaper = async (req, res) => {
     } else {
       // Paper created via text editor
       const tempFilename = `qp_${Date.now()}.txt`;
-      const tempPath = path.join('uploads', tempFilename);
+      const tempPath = path.join(uploadDir, tempFilename);
       fs.writeFileSync(tempPath, textContent);
       filePath = tempPath;
       originalFilename = `${subjectCode}_Paper.txt`;
@@ -125,7 +133,7 @@ export const updateQuestionPaper = async (req, res) => {
       fileBuffer = fs.readFileSync(req.file.path);
     } else if (textContent && textContent.trim()) {
       const tempFilename = paper.filePath ? path.basename(paper.filePath) : `qp_${Date.now()}.txt`;
-      const tempPath = path.join('uploads', tempFilename);
+      const tempPath = path.join(uploadDir, tempFilename);
       fs.writeFileSync(tempPath, textContent);
       paper.filePath = tempPath;
       fileBuffer = Buffer.from(textContent, 'utf-8');
@@ -280,6 +288,7 @@ export const viewPaperSecurely = async (req, res) => {
       const possiblePaths = [
         paper.filePath,
         path.resolve(paper.filePath),
+        path.join(uploadDir, path.basename(paper.filePath)),
         path.join(process.cwd(), paper.filePath),
         path.join(process.cwd(), 'uploads', path.basename(paper.filePath)),
         path.join(process.cwd(), 'backend', 'uploads', path.basename(paper.filePath))
@@ -496,6 +505,7 @@ export const downloadPaperAuthorized = async (req, res) => {
       const possiblePaths = [
         paper.filePath,
         path.resolve(paper.filePath),
+        path.join(uploadDir, path.basename(paper.filePath)),
         path.join(process.cwd(), paper.filePath),
         path.join(process.cwd(), 'uploads', path.basename(paper.filePath)),
         path.join(process.cwd(), 'backend', 'uploads', path.basename(paper.filePath))

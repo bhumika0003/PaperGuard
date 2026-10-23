@@ -781,17 +781,17 @@ export const AdminRoleActivitiesPage = () => {
                 </button>
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-auto max-h-[620px] rounded-2xl border border-slate-200 dark:border-[#33435C] relative shadow-sm scroll-smooth">
                 <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="border-b border-slate-200 dark:border-[#33435C] bg-slate-50/70 dark:bg-[#182232]/70 text-slate-500 dark:text-[#CBD5E1] font-bold uppercase tracking-wider text-[11px]">
-                      <th className="py-3.5 px-4">User & Role</th>
-                      <th className="py-3.5 px-4">Action Performed</th>
-                      <th className="py-3.5 px-4">Paper / Target Context</th>
-                      <th className="py-3.5 px-4">Network & Hardware Footprint</th>
-                      <th className="py-3.5 px-4">Result</th>
-                      <th className="py-3.5 px-4">Timestamp</th>
-                      <th className="py-3.5 px-4 text-right">Ledger Record</th>
+                  <thead className="sticky top-0 z-20 bg-slate-50 dark:bg-[#182232] shadow-sm">
+                    <tr className="border-b border-slate-200 dark:border-[#33435C] text-slate-600 dark:text-[#CBD5E1] font-bold uppercase tracking-wider text-[11px]">
+                      <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-50 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">User & Role</th>
+                      <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-50 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">Action Performed</th>
+                      <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-50 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">Paper / Target Context</th>
+                      <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-50 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">Network & Hardware Footprint</th>
+                      <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-50 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">Result</th>
+                      <th className="py-3.5 px-4 sticky top-0 z-20 bg-slate-50 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">Timestamp</th>
+                      <th className="py-3.5 px-4 text-right sticky top-0 z-20 bg-slate-50 dark:bg-[#182232] border-b border-slate-200 dark:border-[#33435C]">Ledger Record</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 dark:divide-[#33435C]/50">

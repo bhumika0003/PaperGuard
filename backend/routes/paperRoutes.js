@@ -1,6 +1,8 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import {
   uploadQuestionPaper,
   updateQuestionPaper,
@@ -13,9 +15,16 @@ import {
 import { authenticateToken } from '../middleware/auth.js';
 import { authorizeRoles } from '../middleware/rbac.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadDir = path.resolve(__dirname, '../uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -26,7 +35,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 const router = express.Router();
 
-router.post('/upload', authenticateToken, authorizeRoles('Teacher'), upload.single('paperFile'), uploadQuestionPaper);
+router.post('/upload', authenticateToken, authorizeRoles('Teacher', 'Admin'), upload.single('paperFile'), uploadQuestionPaper);
 router.put('/:paperId', authenticateToken, authorizeRoles('Teacher', 'Admin'), upload.single('paperFile'), updateQuestionPaper);
 router.get('/', authenticateToken, getQuestionPapers);
 router.get('/:paperId', authenticateToken, getPaperById);

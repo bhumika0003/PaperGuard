@@ -59,7 +59,10 @@ export const TeacherDashboard = () => {
 
   useEffect(() => {
     fetchTeacherPapers();
-  }, []);
+    if (user?.department) {
+      setDepartment(user.department);
+    }
+  }, [user]);
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -90,11 +93,7 @@ export const TeacherDashboard = () => {
         formData.append('paperFile', paperFile);
       }
 
-      const res = await api.post('/papers/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const res = await api.post('/papers/upload', formData);
 
       setUploadSuccess(res.data.paper);
       setSubject('');
@@ -104,7 +103,9 @@ export const TeacherDashboard = () => {
       setPaperFile(null);
       fetchTeacherPapers();
     } catch (err) {
-      alert(err.response?.data?.message || 'Upload failed');
+      const errMsg = err.response?.data?.message || err.message || 'Upload failed';
+      setAttachmentError(errMsg);
+      alert(errMsg);
     } finally {
       setUploading(false);
     }
@@ -136,9 +137,7 @@ export const TeacherDashboard = () => {
       if (editTextContent) formData.append('textContent', editTextContent);
       if (editPaperFile) formData.append('paperFile', editPaperFile);
 
-      const res = await api.put(`/papers/${editingPaper.paperId}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const res = await api.put(`/papers/${editingPaper.paperId}`, formData);
 
       alert(`Paper updated successfully! New SHA-256 fingerprint: ${res.data.paper.hash}\n\nNotice: Principal and Exam Controller have been alerted of this paper revision.`);
       setEditingPaper(null);

@@ -109,6 +109,44 @@ html.light [class*="from-blue-950"] {
   border-color: #BFDBFE !important;
 }
 
+/* Threat Alert Banner Light Mode High Contrast */
+html.light .threat-alert-banner {
+  background: linear-gradient(to right, #FFF1F2 0%, #FFE4E6 100%) !important;
+  border-color: #FB7185 !important;
+}
+html.light .threat-alert-banner p,
+html.light .threat-alert-banner span {
+  color: #4C0519 !important;
+}
+html.light .threat-alert-banner .suspect-badge {
+  background-color: #FECDD3 !important;
+  border-color: #F43F5E !important;
+  color: #881337 !important;
+}
+html.light .threat-alert-banner .time-badge {
+  background-color: #E0F2FE !important;
+  border-color: #38BDF8 !important;
+  color: #0369A1 !important;
+}
+html.light .threat-alert-banner .attention-badge {
+  background-color: #FEF3C7 !important;
+  border-color: #F59E0B !important;
+  color: #92400E !important;
+}
+
+/* Oversight Banner Light Mode High Contrast */
+html.light .oversight-banner {
+  background: linear-gradient(to right, #EFF6FF 0%, #DBEAFE 100%) !important;
+  border-color: #93C5FD !important;
+}
+html.light .oversight-banner h2 {
+  color: #0F172A !important;
+}
+html.light .oversight-banner p,
+html.light .oversight-banner span {
+  color: #1E293B !important;
+}
+
 html.light [class*="from-emerald-950"] {
   background: linear-gradient(to right, #D1FAE5 0%, #ECFDF5 100%) !important;
   border-color: #A7F3D0 !important;

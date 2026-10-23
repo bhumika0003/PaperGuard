@@ -169,6 +169,27 @@ const initializeDatabaseAndSeeds = async () => {
 
     }
 
+    const defaultAdmin = await User.findOne({
+      where: {
+        email: 'admin@securestack.edu'
+      }
+    });
+
+    if (!defaultAdmin) {
+      const adminPassHash = await bcrypt.hash('Password@123', 10);
+      await User.create({
+        userId: 'ADM-1001',
+        name: 'System Administrator',
+        email: 'admin@securestack.edu',
+        passwordHash: adminPassHash,
+        role: 'Admin',
+        department: 'Cyber Security & IT Administration',
+        status: 'Active',
+        lastActivity: 'Active'
+      });
+      console.log('✅ Created default admin account (admin@securestack.edu).');
+    }
+
     // ==================================================
     // SEED QUESTION PAPER - CS
     // ==================================================

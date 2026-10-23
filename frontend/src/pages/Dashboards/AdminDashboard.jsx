@@ -238,10 +238,10 @@ export const AdminDashboard = () => {
 
           {/* Active Suspicious Activities Alert Banner */}
           {activeAlerts.length > 0 && (
-            <div className="p-5 rounded-2xl bg-gradient-to-r from-rose-950 via-rose-900/90 to-slate-900 border-2 border-rose-500/70 shadow-2xl shadow-rose-950/70 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in duration-300">
+            <div className="threat-alert-banner p-5 rounded-2xl bg-gradient-to-r from-rose-950 via-rose-900/90 to-slate-900 border-2 border-rose-500/70 shadow-2xl shadow-rose-950/70 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in duration-300">
               <div className="flex items-start sm:items-center space-x-4">
-                <div className="relative p-3 rounded-2xl bg-rose-500/20 border border-rose-500 text-rose-400 flex-shrink-0 animate-pulse">
-                  <ShieldAlert className="w-8 h-8 text-rose-500" />
+                <div className="relative p-3 rounded-2xl bg-rose-500/20 border border-rose-500 text-rose-500 dark:text-rose-400 flex-shrink-0 animate-pulse">
+                  <ShieldAlert className="w-8 h-8 text-rose-600 dark:text-rose-500" />
                   <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-rose-500"></span>
@@ -249,20 +249,27 @@ export const AdminDashboard = () => {
                 </div>
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-base font-black text-white tracking-wide">
+                    <span className="text-base font-black text-rose-950 dark:text-white tracking-wide">
                       SUSPICIOUS ACTIVITY ALERT
                     </span>
                     <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-black bg-rose-600 text-white shadow-sm animate-bounce">
                       {activeAlerts.length} ACTIVE THREAT{activeAlerts.length > 1 ? 'S' : ''}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">
+                    <span className="attention-badge px-2.5 py-0.5 rounded text-[11px] font-mono bg-amber-100 dark:bg-amber-500/20 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-500/40 font-extrabold shadow-xs">
                       ADMIN ATTENTION REQUIRED
                     </span>
                   </div>
-                  <p className="text-xs text-rose-200 mt-1">
-                    Latest Incident: <strong className="text-white font-bold">{activeAlerts[0]?.activity}</strong> by suspect{' '}
-                    <strong className="text-rose-100">{activeAlerts[0]?.userName} ({activeAlerts[0]?.userId})</strong>{' '}
-                    at <span className="font-mono text-cyan-300 font-bold">{formatTimeWithAMPM(activeAlerts[0]?.detectedTime)}</span>
+                  <p className="text-xs text-rose-900 dark:text-rose-200 mt-2 font-medium flex items-center gap-1.5 flex-wrap">
+                    <span>Latest Incident:</span>
+                    <strong className="text-rose-950 dark:text-white font-black">{activeAlerts[0]?.activity}</strong>
+                    <span>by suspect</span>
+                    <span className="suspect-badge px-2 py-0.5 rounded-lg bg-rose-100 dark:bg-rose-950/90 text-rose-950 dark:text-rose-100 border border-rose-300 dark:border-rose-700/60 font-black text-xs shadow-xs">
+                      {activeAlerts[0]?.userName} ({activeAlerts[0]?.userId})
+                    </span>
+                    <span>at</span>
+                    <span className="time-badge px-2 py-0.5 rounded-lg bg-cyan-100 dark:bg-cyan-950/90 text-cyan-950 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-700/60 font-mono font-black text-xs shadow-xs">
+                      {formatTimeWithAMPM(activeAlerts[0]?.detectedTime)}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -287,18 +294,23 @@ export const AdminDashboard = () => {
           )}
 
           {/* Institutional Activities Quick Banner */}
-          <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-purple-950/40 to-slate-900 border border-cyan-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
+          <div className="oversight-banner p-5 rounded-2xl bg-gradient-to-r from-blue-950/40 via-purple-950/40 to-slate-900 border border-cyan-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg">
             <div className="flex items-center space-x-3.5">
-              <div className="p-3 rounded-2xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 flex-shrink-0">
+              <div className="p-3 rounded-2xl bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 border border-cyan-300 dark:border-cyan-500/30 flex-shrink-0">
                 <Activity className="w-6 h-6 animate-pulse" />
               </div>
               <div>
-                <h2 className="text-base font-extrabold text-white flex items-center gap-2">
+                <h2 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
                   <span>Cross-Role Activity Oversight Center</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/30">NEW</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-cyan-600 text-white font-black shadow-xs">NEW</span>
                 </h2>
-                <p className="text-xs text-slate-300 mt-0.5">
-                  Live audit trail and actions monitoring for <strong className="text-cyan-400">Teachers</strong>, <strong className="text-amber-400">HODs</strong>, <strong className="text-purple-400">Principals</strong>, and <strong className="text-emerald-400">Exam Controllers</strong>.
+                <p className="text-xs text-slate-700 dark:text-slate-300 mt-1.5 font-medium flex items-center gap-1.5 flex-wrap">
+                  <span>Live audit trail and actions monitoring for</span>
+                  <span className="px-2 py-0.5 rounded-lg bg-cyan-100 dark:bg-cyan-950/70 text-cyan-950 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/40 font-black">Teachers</span>,
+                  <span className="px-2 py-0.5 rounded-lg bg-amber-100 dark:bg-amber-950/70 text-amber-950 dark:text-amber-300 border border-amber-300 dark:border-amber-500/40 font-black">HODs</span>,
+                  <span className="px-2 py-0.5 rounded-lg bg-purple-100 dark:bg-purple-950/70 text-purple-950 dark:text-purple-300 border border-purple-300 dark:border-purple-500/40 font-black">Principals</span>,
+                  <span>and</span>
+                  <span className="px-2 py-0.5 rounded-lg bg-emerald-100 dark:bg-emerald-950/70 text-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40 font-black">Exam Controllers</span>.
                 </p>
               </div>
             </div>
